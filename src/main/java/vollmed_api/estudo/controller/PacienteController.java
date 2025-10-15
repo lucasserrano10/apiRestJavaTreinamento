@@ -7,22 +7,21 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import vollmed_api.estudo.dto.dadosCadastroMedico;
-import vollmed_api.estudo.medico.Medico;
-import vollmed_api.estudo.medico.MedicoRepository;
+import vollmed_api.estudo.dto.DadosPaciente;
+import vollmed_api.estudo.paciente.Paciente;
+import vollmed_api.estudo.paciente.PacienteRepository;
 
 @RestController
-@RequestMapping("/medicos")
-public class MedicoController {
+@RequestMapping("/pacientes")
+public class PacienteController {
 
     @Autowired
-    private MedicoRepository medicoRepository;
+    PacienteRepository pacienteRepository;
 
     @PostMapping
     @Transactional
-    public void cadastrar(@RequestBody @Valid dadosCadastroMedico dados){
-        var medico = new Medico(dados);
-       medicoRepository.save(medico);
+    public void cadastrar(@RequestBody @Valid DadosPaciente dados){
+        pacienteRepository.save(new Paciente(dados));
     }
 
 }
