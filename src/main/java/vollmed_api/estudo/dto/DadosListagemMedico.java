@@ -1,6 +1,6 @@
 package vollmed_api.estudo.dto;
 
-import vollmed_api.estudo.medico.Medico;
+import vollmed_api.estudo.entities.medico.Medico;
 
 public record DadosListagemMedico(
         Long id,

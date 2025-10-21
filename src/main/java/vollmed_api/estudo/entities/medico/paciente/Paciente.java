@@ -1,14 +1,13 @@
-package vollmed_api.estudo.paciente;
+package vollmed_api.estudo.entities.medico.paciente;
 
 import jakarta.persistence.*;
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import vollmed_api.estudo.dto.DadosAtualizacaoPaciente;
 import vollmed_api.estudo.dto.DadosPaciente;
-import vollmed_api.estudo.endereco.Endereco;
+import vollmed_api.estudo.entities.medico.endereco.Endereco;
 
 @Getter
 @EqualsAndHashCode(of = "id")

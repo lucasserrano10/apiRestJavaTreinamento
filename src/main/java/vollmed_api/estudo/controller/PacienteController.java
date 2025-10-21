@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import vollmed_api.estudo.dto.DadosAtualizacaoPaciente;
 import vollmed_api.estudo.dto.DadosListagemPaciente;
 import vollmed_api.estudo.dto.DadosPaciente;
-import vollmed_api.estudo.paciente.Paciente;
-import vollmed_api.estudo.paciente.PacienteRepository;
+import vollmed_api.estudo.entities.medico.paciente.Paciente;
+import vollmed_api.estudo.entities.medico.paciente.PacienteRepository;
 
 @RestController
 @RequestMapping("/pacientes")

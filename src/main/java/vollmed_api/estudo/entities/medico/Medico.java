@@ -1,4 +1,4 @@
-package vollmed_api.estudo.medico;
+package vollmed_api.estudo.entities.medico;
 
 
 import jakarta.persistence.*;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 import vollmed_api.estudo.dto.DadosAtualizacaoMedico;
 import vollmed_api.estudo.dto.Especialidade;
 import vollmed_api.estudo.dto.dadosCadastroMedico;
-import vollmed_api.estudo.endereco.Endereco;
+import vollmed_api.estudo.entities.medico.endereco.Endereco;
 
 @Table(name="medicos")
 @Entity(name = "Medico")
