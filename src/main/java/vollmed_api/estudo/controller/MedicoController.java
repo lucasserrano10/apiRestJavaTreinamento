@@ -32,19 +32,19 @@ public class MedicoController {
 //     Cria a url do objeto que foi criado caso o ID exista, para pegar o location
        var uri = uriBuilder.path("/medicos/{id}").buildAndExpand(medico.getId()).toUri();
 //     Retorna a URL cadastrada e o corpo que é um DTO de médico
-       return ResponseEntity.created(uri).body(new DadosDetalhamentoMedico(medico));
+       return ResponseEntity.created(uri).body(new DadosDetalhamentoMedico(medico)); // code 201
     }
 
     @GetMapping
     public ResponseEntity<Page<DadosListagemMedico>> listar(Pageable paginacao){
         var page = medicoRepository.findAllByAtivoTrue(paginacao).map(DadosListagemMedico::new);
-        return ResponseEntity.ok(page);
+        return ResponseEntity.ok(page); // code 200
     }
 
     @GetMapping("/{id}")
     public ResponseEntity listarDetalhado(@PathVariable Long id){
         var medico = medicoRepository.getReferenceById(id);
-        return ResponseEntity.ok(new DadosDetalhamentoMedico(medico));
+        return ResponseEntity.ok(new DadosDetalhamentoMedico(medico)); // code 200
     }
 
     @PutMapping
@@ -53,7 +53,7 @@ public class MedicoController {
         var medico = medicoRepository.getReferenceById(dados.id());
         medico.atualizarInformacoes(dados);
 
-        return ResponseEntity.ok(new DadosDetalhamentoMedico(medico));
+        return ResponseEntity.ok(new DadosDetalhamentoMedico(medico)); // 200 code
     }
 
     @DeleteMapping("/{id}")
@@ -61,7 +61,7 @@ public class MedicoController {
     public ResponseEntity excluir(@PathVariable Long id){
         var medico = medicoRepository.getReferenceById(id);
         medico.excluir();
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.noContent().build(); // 204 code
     }
 
 }
