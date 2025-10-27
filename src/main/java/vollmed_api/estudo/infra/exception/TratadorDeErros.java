@@ -1,7 +1,6 @@
-package vollmed_api.estudo.infra;
+package vollmed_api.estudo.infra.exception;
 
 import jakarta.persistence.EntityNotFoundException;
-import org.apache.coyote.BadRequestException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
