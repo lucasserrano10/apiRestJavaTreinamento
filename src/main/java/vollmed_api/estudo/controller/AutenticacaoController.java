@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import vollmed_api.estudo.dto.DadosAutenticacao;
+import vollmed_api.estudo.entities.medico.usuario.Usuario;
+import vollmed_api.estudo.infra.security.DadosTokenJWT;
+import vollmed_api.estudo.infra.security.TokenService;
 
 @RestController
 @RequestMapping("/login")
@@ -18,12 +21,16 @@ public class AutenticacaoController {
     @Autowired
     private AuthenticationManager manager;
 
+    @Autowired
+    private TokenService tokenService;
+
     @PostMapping
     public ResponseEntity efetuarLogin(@RequestBody @Valid DadosAutenticacao dados){
         var token = new UsernamePasswordAuthenticationToken(dados.login(),dados.senha());
         var authentication = manager.authenticate(token);
+        var tokenJWT = tokenService.gerarToken((Usuario) authentication.getPrincipal());
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(new DadosTokenJWT(tokenJWT));
     }
 
 }
