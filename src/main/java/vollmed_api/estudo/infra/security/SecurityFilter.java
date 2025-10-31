@@ -5,8 +5,11 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import vollmed_api.estudo.entities.medico.usuario.UsuarioRepository;
 
 import java.io.IOException;
 
@@ -16,21 +19,28 @@ public class SecurityFilter extends OncePerRequestFilter {
     @Autowired
     private TokenService tokenService;
 
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         var tokenJWT = recuperarToken(request);
-        var subject = tokenService.getSubject(tokenJWT);
-//      Se chegou até aqui o token tá válido, mas é necessário autenticar o usuário
-
+        if (tokenJWT != null){
+            var subject = tokenService.getSubject(tokenJWT);
+            var usuario = usuarioRepository.findByLogin(subject);
+            // dizendo para o spring que o usuário esta autenticado e pode liberar a requisição
+            var authentication = new UsernamePasswordAuthenticationToken(usuario,null,usuario.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        }
+        // sai do filtro e entra no Spring MVC que é executado o Security Configurations se estiver executado ele libera a requisição
         filterChain.doFilter(request,response);
     }
 
     private String recuperarToken(HttpServletRequest request) {
         var authHeader = request.getHeader("Authorization");
-        if (authHeader == null){
-            throw new RuntimeException("TokenJWT não enviado no header authorization");
+        if (authHeader != null){
+            return authHeader.replace("Bearer ", "");
         }
-
-        return authHeader.replace("Bearer ", "");
+        return null;
     }
 }
