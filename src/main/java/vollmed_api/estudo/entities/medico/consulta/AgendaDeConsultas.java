@@ -6,10 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import vollmed_api.estudo.dto.DadosAgendamentoConsulta;
 import vollmed_api.estudo.dto.DadosCancelamentoConsulta;
+import vollmed_api.estudo.dto.DadosDetalhamentoConsulta;
 import vollmed_api.estudo.dto.MotivoCancelamento;
 import vollmed_api.estudo.entities.medico.Medico;
 import vollmed_api.estudo.entities.medico.MedicoRepository;
+import vollmed_api.estudo.entities.medico.consulta.validacoes.ValidadorAgendamentoDeConsulta;
 import vollmed_api.estudo.entities.medico.paciente.PacienteRepository;
+
+import java.util.List;
 
 @Service
 public class AgendaDeConsultas {
@@ -23,7 +27,10 @@ public class AgendaDeConsultas {
     @Autowired
     private PacienteRepository pacienteRepository;
 
-    public void agendar(DadosAgendamentoConsulta dados) throws ValidacaoException {
+    @Autowired
+    private List<ValidadorAgendamentoDeConsulta> validadores;
+
+    public DadosDetalhamentoConsulta agendar(DadosAgendamentoConsulta dados) throws ValidacaoException {
         if (!pacienteRepository.existsById(dados.idPaciente())){
             throw new ValidacaoException("Id do Paciente informado não existe");
         }
@@ -31,10 +38,23 @@ public class AgendaDeConsultas {
             throw new ValidacaoException("Id do Médico informado não existe");
         }
 
+        // Validações
+        validadores.forEach(v -> {
+            try {
+                v.validar(dados);
+            } catch (ValidacaoException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
         var paciente = pacienteRepository.getReferenceById(dados.idPaciente());
         var medico = escolherMedico(dados);
+        if(dados.idMedico() == null){
+            throw new ValidacaoException("Não existe médico disponível nessa data");
+        }
         var consulta = new Consulta(medico,paciente,dados.data());
         consultaRepository.save(consulta);
+        return new DadosDetalhamentoConsulta(consulta);
     }
 
     private Medico escolherMedico(DadosAgendamentoConsulta dados) throws ValidacaoException {
