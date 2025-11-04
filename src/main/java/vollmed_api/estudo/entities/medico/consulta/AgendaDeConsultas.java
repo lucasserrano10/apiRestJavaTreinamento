@@ -11,6 +11,7 @@ import vollmed_api.estudo.dto.MotivoCancelamento;
 import vollmed_api.estudo.entities.medico.Medico;
 import vollmed_api.estudo.entities.medico.MedicoRepository;
 import vollmed_api.estudo.entities.medico.consulta.validacoes.ValidadorAgendamentoDeConsulta;
+import vollmed_api.estudo.entities.medico.consulta.validacoes.ValidadorCancelamentoConsulta;
 import vollmed_api.estudo.entities.medico.paciente.PacienteRepository;
 
 import java.util.List;
@@ -29,6 +30,9 @@ public class AgendaDeConsultas {
 
     @Autowired
     private List<ValidadorAgendamentoDeConsulta> validadores;
+
+    @Autowired
+    private List<ValidadorCancelamentoConsulta> validadoresCancelamento;
 
     public DadosDetalhamentoConsulta agendar(DadosAgendamentoConsulta dados) throws ValidacaoException {
         if (!pacienteRepository.existsById(dados.idPaciente())){
@@ -75,6 +79,14 @@ public class AgendaDeConsultas {
         if(!consultaRepository.existsById(dados.idConsulta())){
             throw new ValidacaoException("Id da consulta informado não existe");
         }
+
+        validadoresCancelamento.forEach(v -> {
+            try {
+                v.validarCancelamento(dados);
+            } catch (ValidacaoException e) {
+                throw new RuntimeException(e);
+            }
+        });
 
         var consulta = consultaRepository.getReferenceById(dados.idConsulta());
         consulta.cancelar(dados.motivoCancelamento());
